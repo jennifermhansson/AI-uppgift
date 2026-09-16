@@ -1,0 +1,535 @@
+{
+  "name": "Nordvind Bygg – kontaktformulär",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nordvind-kontakt",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "b6c3b94c-22e4-4cd7-8036-e01b4d722d0b",
+      "name": "Kontaktformulär",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        300
+      ],
+      "webhookId": "cefc2650-fb7c-4bdb-8ca0-42b67b04cc71"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Läser in formulärdata, städar den, avgör om den är giltig\n// och räknar ut vilken väg förfrågan ska ta.\nconst ut = [];\n\nfor (const item of $input.all()) {\n  // Webhook-noden lägger POST-innehållet under .body\n  const d = item.json.body ?? item.json;\n\n  const namn = String(d.namn ?? '').trim();\n  const epost = String(d.epost ?? '').trim().toLowerCase();\n  const telefon = String(d.telefon ?? '').trim();\n  const jobbtyp = String(d.jobbtyp ?? '').trim();\n  const beskrivning = String(d.beskrivning ?? '').trim();\n  const budgetText = String(d.budgetText ?? '').trim();\n  const budgetMin = Number(d.budgetMin ?? -1);\n  const honungsfalla = String(d.foretag ?? '').trim();\n\n  // --- Kontroller -------------------------------------------------\n  const epostOk = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(epost);\n  const spam = honungsfalla.length > 0;            // dolt fält = bott\n  const komplett =\n    namn.length >= 2 &&\n    epostOk &&\n    jobbtyp !== '' &&\n    budgetText !== '' &&\n    beskrivning.length >= 10 &&\n    Number.isFinite(budgetMin) && budgetMin >= 0;\n\n  const status = spam ? 'spam' : (komplett ? 'ok' : 'ogiltig');\n\n  // --- Kategori utifrån budget ------------------------------------\n  let kategori = 'Litet jobb';\n  if (budgetMin >= 150000) kategori = 'Stort jobb';\n  else if (budgetMin >= 25000) kategori = 'Mellanstort jobb';\n\n  // --- Bekräftelse som visas på sidan -----------------------------\n  const fornamn = namn.split(' ')[0] || 'du';\n  const meddelanden = {\n    'Stort jobb': 'Din förfrågan har gått direkt till Sara, vår säljansvariga. Hon hör av sig inom ett arbetsdygn för att boka ett platsbesök.',\n    'Mellanstort jobb': 'Vi har tagit emot din förfrågan och återkommer inom ett arbetsdygn med en första bedömning.',\n    'Litet jobb': 'Vi har tagit emot din förfrågan. Du får ett mejl med ett första svar inom några minuter.',\n  };\n\n  const nu = new Date();\n  const referens =\n    'NV-' + nu.toISOString().slice(0, 10).replace(/-/g, '') +\n    '-' + Math.random().toString(36).slice(2, 6).toUpperCase();\n\n  ut.push({\n    json: {\n      referens,\n      mottagen: nu.toISOString(),\n      namn,\n      fornamn,\n      epost,\n      telefon,\n      jobbtyp,\n      budgetText,\n      budgetMin,\n      beskrivning,\n      kategori,\n      status,\n      rubrik: 'Tack, ' + fornamn + '!',\n      svarsmeddelande: meddelanden[kategori],\n    },\n  });\n}\n\nreturn ut;\n"
+      },
+      "id": "bfa27123-60de-4734-a8e1-cd52d6d69174",
+      "name": "Normalisera",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "05337d22-8dcd-4603-a00d-97f4499836ed",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ok",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "bceb2c67-7732-4b58-ac28-e77b1d9aa8e0",
+      "name": "Giltig förfrågan?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -20,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, rubrik: $json.rubrik, meddelande: $json.svarsmeddelande, referens: $json.referens }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "18a5eae3-aaca-4563-bf3a-b9776c8895ed",
+      "name": "Svara Tack",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 400,
+        "responseBody": "={{ JSON.stringify({ ok: false, meddelande: 'Förfrågan kunde inte tas emot. Kontrollera att alla fält är ifyllda.' }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "88878e91-1192-43c9-8260-af99435ff7fa",
+      "name": "Svara Avvisad",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "KLISTRA_IN_DITT_KALKYLARK_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Förfrågningar"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Referens": "={{ $json.referens }}",
+            "Mottagen": "={{ $json.mottagen }}",
+            "Namn": "={{ $json.namn }}",
+            "E-post": "={{ $json.epost }}",
+            "Telefon": "={{ $json.telefon }}",
+            "Typ av jobb": "={{ $json.jobbtyp }}",
+            "Budget": "={{ $json.budgetText }}",
+            "Budget min (kr)": "={{ $json.budgetMin }}",
+            "Kategori": "={{ $json.kategori }}",
+            "Beskrivning": "={{ $json.beskrivning }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "a2a00d91-48ac-4bf6-a6fc-9f99a8f3b4b2",
+      "name": "Logga i kalkylark",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        420,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "751a760d-0e9e-4473-b013-5c137dc78387",
+                    "leftValue": "={{ $('Normalisera').item.json.budgetMin }}",
+                    "rightValue": 150000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Stort jobb"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "53857380-a668-4348-95cf-0207e43b15fd",
+                    "leftValue": "={{ $('Normalisera').item.json.budgetMin }}",
+                    "rightValue": 25000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mellanstort jobb"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a2b0bfce-67f2-468c-be70-8d937a6cd983",
+                    "leftValue": "={{ $('Normalisera').item.json.budgetMin }}",
+                    "rightValue": 25000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Litet jobb"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "312adae8-e502-4de1-93ea-9035e459d630",
+      "name": "Budgetrutt",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        640,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "sara@nordvindbygg.se",
+        "subject": "=🔴 STORT JOBB – {{ $('Normalisera').item.json.namn }} – {{ $('Normalisera').item.json.budgetText }}",
+        "emailType": "text",
+        "message": "=Ny förfrågan med stor budget. Ring kunden inom ett arbetsdygn.\n\nÄrende:      {{ $('Normalisera').item.json.referens }}\nKund:        {{ $('Normalisera').item.json.namn }}\nE-post:      {{ $('Normalisera').item.json.epost }}\nTelefon:     {{ $('Normalisera').item.json.telefon || 'ej angivet' }}\nTyp av jobb: {{ $('Normalisera').item.json.jobbtyp }}\nBudget:      {{ $('Normalisera').item.json.budgetText }}\nMottagen:    {{ $('Normalisera').item.json.mottagen }}\n\nKundens beskrivning:\n{{ $('Normalisera').item.json.beskrivning }}\n\n--\nSkickat automatiskt från kontaktformuläret på nordvindbygg.se",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7fcaf1bd-42ff-488d-813c-79bfc885734c",
+      "name": "Mejla Sara (sälj)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "offert@nordvindbygg.se",
+        "subject": "=Ny förfrågan – {{ $('Normalisera').item.json.namn }} – {{ $('Normalisera').item.json.budgetText }}",
+        "emailType": "text",
+        "message": "=Mellanstor förfrågan att fördela på nästa morgonmöte.\n\nÄrende:      {{ $('Normalisera').item.json.referens }}\nKund:        {{ $('Normalisera').item.json.namn }}\nE-post:      {{ $('Normalisera').item.json.epost }}\nTelefon:     {{ $('Normalisera').item.json.telefon || 'ej angivet' }}\nTyp av jobb: {{ $('Normalisera').item.json.jobbtyp }}\nBudget:      {{ $('Normalisera').item.json.budgetText }}\n\nKundens beskrivning:\n{{ $('Normalisera').item.json.beskrivning }}\n\n--\nSkickat automatiskt från kontaktformuläret på nordvindbygg.se",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "af66cd3a-66c4-493f-94f0-c1d463ddbcef",
+      "name": "Mejla teamet",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Skriv svaret till den här kunden:\n\nFörnamn: {{ $('Normalisera').item.json.fornamn }}\nTyp av jobb: {{ $('Normalisera').item.json.jobbtyp }}\nUngefärlig budget: {{ $('Normalisera').item.json.budgetText }}\nÄrendenummer: {{ $('Normalisera').item.json.referens }}\n\nKunden skrev:\n\"\"\"\n{{ $('Normalisera').item.json.beskrivning }}\n\"\"\"",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Du är kundtjänst hos Nordvind Bygg, en liten byggfirma i Mälardalen.\nDu skriver det första svaret på en förfrågan om ett mindre jobb (budget under 25 000 kr).\n\nSå här skriver du:\n- På svenska, vänligt, konkret och personligt – som en yrkesperson, inte en broschyr.\n- 100–150 ord, inga rubriker, inga punktlistor, ingen emoji.\n- Börja med \"Hej <förnamn>,\" och avsluta med en hälsning från Nordvind Bygg och telefonnumret 021-12 34 56.\n- Visa att du läst beskrivningen: nämn något konkret som kunden faktiskt skrev.\n- Ställ EN relevant följdfråga som hjälper oss att prissätta jobbet.\n- Säg att en snickare hör av sig inom två arbetsdagar för att boka tid.\n- Lova ALDRIG ett pris, ett exakt datum eller något som inte står i förfrågan.\n- Skriv bara själva mejltexten, ingen ämnesrad och inga kommentarer."
+            }
+          ]
+        }
+      },
+      "id": "8a1e85f6-3f68-403b-93c0-71c998241e15",
+      "name": "AI skriver svaret",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        900,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {
+          "temperature": 0.6
+        }
+      },
+      "id": "2a1617e5-25ce-4edc-a355-1b7422a3d5c8",
+      "name": "OpenAI-modell",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        920,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalisera').item.json.epost }}",
+        "subject": "=Tack för din förfrågan – Nordvind Bygg ({{ $('Normalisera').item.json.referens }})",
+        "emailType": "text",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "3df0dd4b-5dfc-45b7-9167-f0ba1676a824",
+      "name": "Mejla kunden",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 1. Ta emot\nHTML-sidan postar JSON hit.\n\n**CORS:** `Allowed Origins` är satt till `*` så att sidan får läsa svaret.\n\n**Normalisera** städar fälten, stoppar spam (dolt fält) och räknar ut kategori utifrån budget.",
+        "height": 240,
+        "width": 460,
+        "color": 7
+      },
+      "id": "571ac99b-2be0-4e93-886e-1ea2cdd6242e",
+      "name": "Not 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2. Svara direkt\nSidan visar \"Tack\" utan omladdning.\nSvaret skickas **innan** mejl och kalkylark, så kunden slipper vänta.",
+        "height": 160,
+        "width": 220,
+        "color": 4
+      },
+      "id": "d49be81e-6572-4127-8709-d4f57ab7b776",
+      "name": "Not 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3. Logga allt\nAlla giltiga förfrågningar hamnar i samma kalkylark.\n\nByt `documentId` mot ditt eget ark.",
+        "height": 160,
+        "width": 200,
+        "color": 3
+      },
+      "id": "4508275c-47a6-42f1-b458-97f32cdc6059",
+      "name": "Not 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 4. Tre vägar\n**Stort** (≥ 150 000 kr) → Sara på sälj, tydligt märkt\n**Mellan** (25 000–150 000) → gemensam inkorg\n**Litet** (< 25 000) → AI skriver ett vänligt svar till kunden",
+        "height": 160,
+        "width": 480,
+        "color": 6
+      },
+      "id": "605fad95-763e-4828-9157-c1cec1c80c99",
+      "name": "Not 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -160
+      ]
+    }
+  ],
+  "connections": {
+    "Kontaktformulär": {
+      "main": [
+        [
+          {
+            "node": "Normalisera",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalisera": {
+      "main": [
+        [
+          {
+            "node": "Giltig förfrågan?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Giltig förfrågan?": {
+      "main": [
+        [
+          {
+            "node": "Svara Tack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Svara Avvisad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Svara Tack": {
+      "main": [
+        [
+          {
+            "node": "Logga i kalkylark",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logga i kalkylark": {
+      "main": [
+        [
+          {
+            "node": "Budgetrutt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Budgetrutt": {
+      "main": [
+        [
+          {
+            "node": "Mejla Sara (sälj)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mejla teamet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI skriver svaret",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI skriver svaret": {
+      "main": [
+        [
+          {
+            "node": "Mejla kunden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI-modell": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI skriver svaret",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
