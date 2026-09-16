@@ -110,9 +110,25 @@ Alla tre mejlnoderna kan dela samma Gmail-credential – du skapar den en gång 
 
 ### 5. Ändra mottagaradresser
 
-* `Mejla Sara (sälj)` → `sendTo`: byt `sara@nordvindbygg.se` mot **din egen** adress (det är den du visar upp som "Saras" mejl i redovisningen).
-* `Mejla teamet` → `sendTo`: byt `offert@nordvindbygg.se` mot en annan adress du kommer åt (går bra med samma adress + `+team`, t.ex. `dittnamn+team@gmail.com`).
-* `Mejla kunden` → rör inte, den skickar till adressen kunden fyllde i formuläret.
+Nordvind Bygg är ett påhittat företag och `nordvindbygg.se` tar inte emot mejl. Låter du adresserna stå kvar blir körningen ändå **grön** i n8n – Gmail sväljer adressen – och först några minuter senare kommer en studs i din inkorg. Byt därför innan du testar.
+
+Båda interna adresserna sitter på **ett** ställe: öppna noden `Normalisera`, raderna längst upp:
+
+```js
+const MEJL_SALJ = 'sara@nordvindbygg.se';    // Sara på sälj – stora jobb
+const MEJL_TEAM = 'offert@nordvindbygg.se';  // gemensam inkorg – mellanstora jobb
+```
+
+Skriv in adresser du faktiskt kommer åt. Har du bara en inkorg funkar Gmails plus-adressering utmärkt – allt hamnar hos dig, men du ser på mottagarraden vilken väg mejlet tog och kan filtrera på det:
+
+```js
+const MEJL_SALJ = 'dittnamn+sara@gmail.com';
+const MEJL_TEAM = 'dittnamn+team@gmail.com';
+```
+
+`Mejla kunden` rör du inte – den skickar till adressen kunden fyllde i formuläret. När du testar det lilla jobbet fyller du alltså i din egen adress (gärna `dittnamn+kund@gmail.com`) i formuläret.
+
+**Avsändare** blir det Gmail-konto du kopplade in, så mejlen kommer från din egen adress. Det är helt okej för redovisningen – vill du att det ska se skarpare ut kan du byta visningsnamn under Gmail → Inställningar → Konton → "Skicka e-post som".
 
 ### 6. Koppla ihop sidan med webhooken
 
@@ -135,7 +151,7 @@ CORS är redan förberett i noden (`Allowed Origins = *`), så sidan får läsa 
 
 ## Del 3 – Testa
 
-Aktivera workflowet (reglaget **Active**), öppna sidan och skicka **tre** förfrågningar. Använd en riktig adress du kommer åt i alla tre – då ser du också AI-svaret.
+Aktivera workflowet (reglaget **Active**), öppna sidan och skicka **tre** förfrågningar. Använd en riktig adress du kommer åt i alla tre – då ser du också AI-svaret. (Adresserna till Sara och teamet ska vara utbytta enligt steg 5.)
 
 | # | Budget | Förväntat resultat |
 | --- | --- | --- |
@@ -168,7 +184,8 @@ Skriv gärna beskrivningar med lite kött på benen i test 3 – det är hela po
 | Röd ruta: "Något gick fel när förfrågan skulle skickas" | Öppna webbläsarens konsol (F12). Står det **CORS** – kontrollera att `Allowed Origins (CORS)` är `*` i webhook-noden och att du inte öppnat sidan som `file://`. |
 | `404 webhook not registered` | Workflowet är inte aktiverat (skarp URL), eller så har test-läget slutat lyssna. Klicka **Execute workflow** igen, eller aktivera workflowet och byt till `/webhook/`-URL:en. |
 | Sidan visar "Tack" men inget hamnar i arket | Kolla **Executions** – körningen är röd på Sheets-noden. Oftast stavfel i en kolumnrubrik, eller fel flik vald. |
-| Mejlen kommer inte fram | Kolla skräpposten. Gmail-noden kräver att credentialen har rätt behörighet – öppna den och kör **Reconnect** om den ser gulmarkerad ut. |
+| Mejlen kommer inte fram | Kolla skräpposten. Kolla också att du bytt adresserna i `Normalisera` – `@nordvindbygg.se` finns inte och studsar. Ser credentialen gulmarkerad ut: öppna den och kör **Reconnect**. |
+| Studsmejl: "Address not found" | Någon adress pekar fortfarande på den påhittade domänen `nordvindbygg.se`. |
 | AI-noden är röd: "insufficient_quota" | OpenAI-kontot saknar saldo. Fyll på några dollar, eller byt till Google Gemini-noden enligt tipset i steg 3. |
 | Fel budget-gren kördes | Öppna noden `Normalisera` i körningen och titta på `budgetMin`. Gränserna sätts i `Budgetrutt`: `≥ 150000`, `≥ 25000`, resten. |
 | Tidsstämpeln i arket är en timme fel | `Mottagen` sparas i UTC. Vill du ha svensk tid: öppna `Logga i kalkylark`, ändra `Mottagen` till `{{ $now.setZone('Europe/Stockholm').toFormat('yyyy-MM-dd HH:mm') }}`. |

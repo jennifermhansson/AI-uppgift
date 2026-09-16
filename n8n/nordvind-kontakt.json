@@ -10,7 +10,7 @@
           "allowedOrigins": "*"
         }
       },
-      "id": "b6c3b94c-22e4-4cd7-8036-e01b4d722d0b",
+      "id": "75601731-9f3b-43e2-9308-885141e780f3",
       "name": "Kontaktformulär",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
@@ -18,13 +18,13 @@
         -460,
         300
       ],
-      "webhookId": "cefc2650-fb7c-4bdb-8ca0-42b67b04cc71"
+      "webhookId": "71a32752-484e-4416-a698-464db140adc1"
     },
     {
       "parameters": {
-        "jsCode": "// Läser in formulärdata, städar den, avgör om den är giltig\n// och räknar ut vilken väg förfrågan ska ta.\nconst ut = [];\n\nfor (const item of $input.all()) {\n  // Webhook-noden lägger POST-innehållet under .body\n  const d = item.json.body ?? item.json;\n\n  const namn = String(d.namn ?? '').trim();\n  const epost = String(d.epost ?? '').trim().toLowerCase();\n  const telefon = String(d.telefon ?? '').trim();\n  const jobbtyp = String(d.jobbtyp ?? '').trim();\n  const beskrivning = String(d.beskrivning ?? '').trim();\n  const budgetText = String(d.budgetText ?? '').trim();\n  const budgetMin = Number(d.budgetMin ?? -1);\n  const honungsfalla = String(d.foretag ?? '').trim();\n\n  // --- Kontroller -------------------------------------------------\n  const epostOk = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(epost);\n  const spam = honungsfalla.length > 0;            // dolt fält = bott\n  const komplett =\n    namn.length >= 2 &&\n    epostOk &&\n    jobbtyp !== '' &&\n    budgetText !== '' &&\n    beskrivning.length >= 10 &&\n    Number.isFinite(budgetMin) && budgetMin >= 0;\n\n  const status = spam ? 'spam' : (komplett ? 'ok' : 'ogiltig');\n\n  // --- Kategori utifrån budget ------------------------------------\n  let kategori = 'Litet jobb';\n  if (budgetMin >= 150000) kategori = 'Stort jobb';\n  else if (budgetMin >= 25000) kategori = 'Mellanstort jobb';\n\n  // --- Bekräftelse som visas på sidan -----------------------------\n  const fornamn = namn.split(' ')[0] || 'du';\n  const meddelanden = {\n    'Stort jobb': 'Din förfrågan har gått direkt till Sara, vår säljansvariga. Hon hör av sig inom ett arbetsdygn för att boka ett platsbesök.',\n    'Mellanstort jobb': 'Vi har tagit emot din förfrågan och återkommer inom ett arbetsdygn med en första bedömning.',\n    'Litet jobb': 'Vi har tagit emot din förfrågan. Du får ett mejl med ett första svar inom några minuter.',\n  };\n\n  const nu = new Date();\n  const referens =\n    'NV-' + nu.toISOString().slice(0, 10).replace(/-/g, '') +\n    '-' + Math.random().toString(36).slice(2, 6).toUpperCase();\n\n  ut.push({\n    json: {\n      referens,\n      mottagen: nu.toISOString(),\n      namn,\n      fornamn,\n      epost,\n      telefon,\n      jobbtyp,\n      budgetText,\n      budgetMin,\n      beskrivning,\n      kategori,\n      status,\n      rubrik: 'Tack, ' + fornamn + '!',\n      svarsmeddelande: meddelanden[kategori],\n    },\n  });\n}\n\nreturn ut;\n"
+        "jsCode": "// Läser in formulärdata, städar den, avgör om den är giltig\n// och räknar ut vilken väg förfrågan ska ta.\n\n// ─── BYT TILL ERA EGNA ADRESSER ────────────────────────────────────\n// Nordvind Bygg är ett påhittat företag, så nordvindbygg.se tar inte\n// emot mejl. Skriv in adresser ni faktiskt kommer åt när ni testar.\nconst MEJL_SALJ = 'sara@nordvindbygg.se';    // Sara på sälj – stora jobb\nconst MEJL_TEAM = 'offert@nordvindbygg.se';  // gemensam inkorg – mellanstora jobb\n// ───────────────────────────────────────────────────────────────────\n\nconst ut = [];\n\nfor (const item of $input.all()) {\n  // Webhook-noden lägger POST-innehållet under .body\n  const d = item.json.body ?? item.json;\n\n  const namn = String(d.namn ?? '').trim();\n  const epost = String(d.epost ?? '').trim().toLowerCase();\n  const telefon = String(d.telefon ?? '').trim();\n  const jobbtyp = String(d.jobbtyp ?? '').trim();\n  const beskrivning = String(d.beskrivning ?? '').trim();\n  const budgetText = String(d.budgetText ?? '').trim();\n  const budgetMin = Number(d.budgetMin ?? -1);\n  const honungsfalla = String(d.foretag ?? '').trim();\n\n  // --- Kontroller -------------------------------------------------\n  const epostOk = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(epost);\n  const spam = honungsfalla.length > 0;            // dolt fält = bott\n  const komplett =\n    namn.length >= 2 &&\n    epostOk &&\n    jobbtyp !== '' &&\n    budgetText !== '' &&\n    beskrivning.length >= 10 &&\n    Number.isFinite(budgetMin) && budgetMin >= 0;\n\n  const status = spam ? 'spam' : (komplett ? 'ok' : 'ogiltig');\n\n  // --- Kategori utifrån budget ------------------------------------\n  let kategori = 'Litet jobb';\n  if (budgetMin >= 150000) kategori = 'Stort jobb';\n  else if (budgetMin >= 25000) kategori = 'Mellanstort jobb';\n\n  // --- Bekräftelse som visas på sidan -----------------------------\n  const fornamn = namn.split(' ')[0] || 'du';\n  const meddelanden = {\n    'Stort jobb': 'Din förfrågan har gått direkt till Sara, vår säljansvariga. Hon hör av sig inom ett arbetsdygn för att boka ett platsbesök.',\n    'Mellanstort jobb': 'Vi har tagit emot din förfrågan och återkommer inom ett arbetsdygn med en första bedömning.',\n    'Litet jobb': 'Vi har tagit emot din förfrågan. Du får ett mejl med ett första svar inom några minuter.',\n  };\n\n  const nu = new Date();\n  const referens =\n    'NV-' + nu.toISOString().slice(0, 10).replace(/-/g, '') +\n    '-' + Math.random().toString(36).slice(2, 6).toUpperCase();\n\n  ut.push({\n    json: {\n      referens,\n      mottagen: nu.toISOString(),\n      namn,\n      fornamn,\n      epost,\n      telefon,\n      jobbtyp,\n      budgetText,\n      budgetMin,\n      beskrivning,\n      kategori,\n      status,\n      rubrik: 'Tack, ' + fornamn + '!',\n      svarsmeddelande: meddelanden[kategori],\n      mejlSalj: MEJL_SALJ,\n      mejlTeam: MEJL_TEAM,\n    },\n  });\n}\n\nreturn ut;\n"
       },
-      "id": "bfa27123-60de-4734-a8e1-cd52d6d69174",
+      "id": "23d002f6-5998-4945-86aa-13e1372c7110",
       "name": "Normalisera",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -44,7 +44,7 @@
           },
           "conditions": [
             {
-              "id": "05337d22-8dcd-4603-a00d-97f4499836ed",
+              "id": "df650671-a543-4961-b26e-6f67221b25cd",
               "leftValue": "={{ $json.status }}",
               "rightValue": "ok",
               "operator": {
@@ -57,7 +57,7 @@
         },
         "options": {}
       },
-      "id": "bceb2c67-7732-4b58-ac28-e77b1d9aa8e0",
+      "id": "93445dec-9a6c-4759-8f2a-bf8c83c85d3e",
       "name": "Giltig förfrågan?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
@@ -81,7 +81,7 @@
           }
         }
       },
-      "id": "18a5eae3-aaca-4563-bf3a-b9776c8895ed",
+      "id": "e03233c8-5f7a-434c-8db9-c86aeac1a905",
       "name": "Svara Tack",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
@@ -106,7 +106,7 @@
           }
         }
       },
-      "id": "88878e91-1192-43c9-8260-af99435ff7fa",
+      "id": "66ba96b7-7ff2-4c58-a03e-8b8b0ea98322",
       "name": "Svara Avvisad",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
@@ -150,7 +150,7 @@
         },
         "options": {}
       },
-      "id": "a2a00d91-48ac-4bf6-a6fc-9f99a8f3b4b2",
+      "id": "ed76665f-73f0-4976-8bac-acacbe1a77a2",
       "name": "Logga i kalkylark",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
@@ -173,7 +173,7 @@
                 },
                 "conditions": [
                   {
-                    "id": "751a760d-0e9e-4473-b013-5c137dc78387",
+                    "id": "2ad3e5bc-0da7-4a66-8ee4-f6b3e303a0c5",
                     "leftValue": "={{ $('Normalisera').item.json.budgetMin }}",
                     "rightValue": 150000,
                     "operator": {
@@ -197,7 +197,7 @@
                 },
                 "conditions": [
                   {
-                    "id": "53857380-a668-4348-95cf-0207e43b15fd",
+                    "id": "a5dc0877-5af7-4fe1-9003-6f75ddb20c31",
                     "leftValue": "={{ $('Normalisera').item.json.budgetMin }}",
                     "rightValue": 25000,
                     "operator": {
@@ -221,7 +221,7 @@
                 },
                 "conditions": [
                   {
-                    "id": "a2b0bfce-67f2-468c-be70-8d937a6cd983",
+                    "id": "2d76d265-add3-49d4-9055-8ef963a5a5b1",
                     "leftValue": "={{ $('Normalisera').item.json.budgetMin }}",
                     "rightValue": 25000,
                     "operator": {
@@ -239,7 +239,7 @@
         },
         "options": {}
       },
-      "id": "312adae8-e502-4de1-93ea-9035e459d630",
+      "id": "9833db25-0eb8-41d6-b436-d3dd31d6eb31",
       "name": "Budgetrutt",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
@@ -250,7 +250,7 @@
     },
     {
       "parameters": {
-        "sendTo": "sara@nordvindbygg.se",
+        "sendTo": "={{ $('Normalisera').item.json.mejlSalj }}",
         "subject": "=🔴 STORT JOBB – {{ $('Normalisera').item.json.namn }} – {{ $('Normalisera').item.json.budgetText }}",
         "emailType": "text",
         "message": "=Ny förfrågan med stor budget. Ring kunden inom ett arbetsdygn.\n\nÄrende:      {{ $('Normalisera').item.json.referens }}\nKund:        {{ $('Normalisera').item.json.namn }}\nE-post:      {{ $('Normalisera').item.json.epost }}\nTelefon:     {{ $('Normalisera').item.json.telefon || 'ej angivet' }}\nTyp av jobb: {{ $('Normalisera').item.json.jobbtyp }}\nBudget:      {{ $('Normalisera').item.json.budgetText }}\nMottagen:    {{ $('Normalisera').item.json.mottagen }}\n\nKundens beskrivning:\n{{ $('Normalisera').item.json.beskrivning }}\n\n--\nSkickat automatiskt från kontaktformuläret på nordvindbygg.se",
@@ -258,7 +258,7 @@
           "appendAttribution": false
         }
       },
-      "id": "7fcaf1bd-42ff-488d-813c-79bfc885734c",
+      "id": "47e78cb0-7b22-4d3e-80d3-8f2258f086de",
       "name": "Mejla Sara (sälj)",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -269,7 +269,7 @@
     },
     {
       "parameters": {
-        "sendTo": "offert@nordvindbygg.se",
+        "sendTo": "={{ $('Normalisera').item.json.mejlTeam }}",
         "subject": "=Ny förfrågan – {{ $('Normalisera').item.json.namn }} – {{ $('Normalisera').item.json.budgetText }}",
         "emailType": "text",
         "message": "=Mellanstor förfrågan att fördela på nästa morgonmöte.\n\nÄrende:      {{ $('Normalisera').item.json.referens }}\nKund:        {{ $('Normalisera').item.json.namn }}\nE-post:      {{ $('Normalisera').item.json.epost }}\nTelefon:     {{ $('Normalisera').item.json.telefon || 'ej angivet' }}\nTyp av jobb: {{ $('Normalisera').item.json.jobbtyp }}\nBudget:      {{ $('Normalisera').item.json.budgetText }}\n\nKundens beskrivning:\n{{ $('Normalisera').item.json.beskrivning }}\n\n--\nSkickat automatiskt från kontaktformuläret på nordvindbygg.se",
@@ -277,7 +277,7 @@
           "appendAttribution": false
         }
       },
-      "id": "af66cd3a-66c4-493f-94f0-c1d463ddbcef",
+      "id": "c7053891-7b90-40c8-ace1-0f66cb86d3ce",
       "name": "Mejla teamet",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -298,7 +298,7 @@
           ]
         }
       },
-      "id": "8a1e85f6-3f68-403b-93c0-71c998241e15",
+      "id": "088236aa-3b1b-484a-aa1b-55a2d7f99db3",
       "name": "AI skriver svaret",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.5,
@@ -319,7 +319,7 @@
           "temperature": 0.6
         }
       },
-      "id": "2a1617e5-25ce-4edc-a355-1b7422a3d5c8",
+      "id": "4a0b474d-0877-4857-ad10-f9747d349a94",
       "name": "OpenAI-modell",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
@@ -338,7 +338,7 @@
           "appendAttribution": false
         }
       },
-      "id": "3df0dd4b-5dfc-45b7-9167-f0ba1676a824",
+      "id": "f23acc28-4289-4c5f-ad88-fbce88b250a9",
       "name": "Mejla kunden",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -349,18 +349,18 @@
     },
     {
       "parameters": {
-        "content": "## 1. Ta emot\nHTML-sidan postar JSON hit.\n\n**CORS:** `Allowed Origins` är satt till `*` så att sidan får läsa svaret.\n\n**Normalisera** städar fälten, stoppar spam (dolt fält) och räknar ut kategori utifrån budget.",
-        "height": 240,
+        "content": "## 1. Ta emot\nHTML-sidan postar JSON hit.\n\n**CORS:** `Allowed Origins` är satt till `*` så att sidan får läsa svaret.\n\n**Normalisera** städar fälten, stoppar spam (dolt fält) och räknar ut kategori utifrån budget.\n\n👉 Mottagaradresserna till Sara och teamet ändrar du överst i **Normalisera**.",
+        "height": 280,
         "width": 460,
         "color": 7
       },
-      "id": "571ac99b-2be0-4e93-886e-1ea2cdd6242e",
+      "id": "0086be73-5f88-4a2f-99ce-09de8c602f5b",
       "name": "Not 1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -500,
-        20
+        -20
       ]
     },
     {
@@ -370,7 +370,7 @@
         "width": 220,
         "color": 4
       },
-      "id": "d49be81e-6572-4127-8709-d4f57ab7b776",
+      "id": "726f4a4a-e7fa-4693-9090-71fc6fca104e",
       "name": "Not 2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -386,7 +386,7 @@
         "width": 200,
         "color": 3
       },
-      "id": "4508275c-47a6-42f1-b458-97f32cdc6059",
+      "id": "315c1850-b533-476f-a717-41306264daca",
       "name": "Not 3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -402,7 +402,7 @@
         "width": 480,
         "color": 6
       },
-      "id": "605fad95-763e-4828-9157-c1cec1c80c99",
+      "id": "3d5de240-ec70-4216-a51b-6050c87facc7",
       "name": "Not 4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
