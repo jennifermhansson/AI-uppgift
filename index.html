@@ -1,402 +1,838 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kontakt – Nordvind Bygg</title>
-<meta name="description" content="Begär offert från Nordvind Bygg. Berätta om ditt projekt så hör vi av oss inom ett arbetsdygn.">
-<style>
-  :root {
-    --bg: #f4f2ef;
-    --surface: #ffffff;
-    --surface-alt: #faf8f5;
-    --border: #e0dbd3;
-    --border-strong: #c9c2b7;
-    --ink: #1c2530;
-    --ink-soft: #5a6674;
-    --brand: #17324d;
-    --brand-soft: #e8eef4;
-    --accent: #c2622a;
-    --accent-soft: #fbeee4;
-    --ok: #1f7a4d;
-    --err: #b3261e;
-    --radius: 14px;
-    --shadow: 0 1px 2px rgba(20,30,45,.06), 0 12px 32px rgba(20,30,45,.08);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #12171d;
-      --surface: #1a2027;
-      --surface-alt: #202831;
-      --border: #2e3843;
-      --border-strong: #46525f;
-      --ink: #eef2f6;
-      --ink-soft: #a3b0be;
-      --brand: #8fb7d9;
-      --brand-soft: #1f2c38;
-      --accent: #e08a4e;
-      --accent-soft: #2c2019;
-      --ok: #5cc38d;
-      --err: #ff8b80;
-      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
-    }
-  }
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Kontakt – Nordvind Bygg</title>
+    <meta
+      name="description"
+      content="Begär offert från Nordvind Bygg. Berätta om ditt projekt så hör vi av oss inom ett arbetsdygn."
+    />
+    <style>
+      :root {
+        --bg: #f4f2ef;
+        --surface: #ffffff;
+        --surface-alt: #faf8f5;
+        --border: #e0dbd3;
+        --border-strong: #c9c2b7;
+        --ink: #1c2530;
+        --ink-soft: #5a6674;
+        --brand: #17324d;
+        --brand-soft: #e8eef4;
+        --accent: #c2622a;
+        --accent-soft: #fbeee4;
+        --ok: #1f7a4d;
+        --err: #b3261e;
+        --radius: 14px;
+        --shadow:
+          0 1px 2px rgba(20, 30, 45, 0.06), 0 12px 32px rgba(20, 30, 45, 0.08);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #12171d;
+          --surface: #1a2027;
+          --surface-alt: #202831;
+          --border: #2e3843;
+          --border-strong: #46525f;
+          --ink: #eef2f6;
+          --ink-soft: #a3b0be;
+          --brand: #8fb7d9;
+          --brand-soft: #1f2c38;
+          --accent: #e08a4e;
+          --accent-soft: #2c2019;
+          --ok: #5cc38d;
+          --err: #ff8b80;
+          --shadow:
+            0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          16px/1.6 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 32px 16px 64px;
+      }
 
-  /* Sidhuvud */
-  .masthead { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
-  .logo { width: 40px; height: 40px; flex: none; color: var(--brand); }
-  .brand-name { font-size: 1.05rem; font-weight: 700; letter-spacing: .02em; }
-  .brand-tag { font-size: .8rem; color: var(--ink-soft); }
+      /* Sidhuvud */
+      .masthead {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 36px;
+      }
+      .logo {
+        width: 40px;
+        height: 40px;
+        flex: none;
+        color: var(--brand);
+      }
+      .brand-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+      .brand-tag {
+        font-size: 0.8rem;
+        color: var(--ink-soft);
+      }
 
-  h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); line-height: 1.2; margin: 0 0 10px; letter-spacing: -.01em; }
-  .lede { color: var(--ink-soft); margin: 0 0 28px; max-width: 54ch; }
+      h1 {
+        font-size: clamp(1.7rem, 5vw, 2.3rem);
+        line-height: 1.2;
+        margin: 0 0 10px;
+        letter-spacing: -0.01em;
+      }
+      .lede {
+        color: var(--ink-soft);
+        margin: 0 0 28px;
+        max-width: 54ch;
+      }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: clamp(20px, 4vw, 32px);
-  }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: clamp(20px, 4vw, 32px);
+      }
 
-  .field { margin-bottom: 22px; }
-  .field:last-of-type { margin-bottom: 26px; }
-  label, .legend { display: block; font-weight: 600; font-size: .93rem; margin-bottom: 7px; }
-  .hint { font-weight: 400; color: var(--ink-soft); font-size: .85rem; }
-  input, select, textarea {
-    width: 100%;
-    font: inherit;
-    color: var(--ink);
-    background: var(--surface-alt);
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    padding: 11px 13px;
-    transition: border-color .15s, box-shadow .15s;
-  }
-  textarea { min-height: 120px; resize: vertical; }
-  select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%), linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 40px; }
-  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
-    outline: none; border-color: var(--brand);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 28%, transparent);
-  }
-  .field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--err); }
-  .error { display: none; color: var(--err); font-size: .85rem; margin-top: 6px; }
-  .field.invalid .error { display: block; }
+      .field {
+        margin-bottom: 22px;
+      }
+      .field:last-of-type {
+        margin-bottom: 26px;
+      }
+      label,
+      .legend {
+        display: block;
+        font-weight: 600;
+        font-size: 0.93rem;
+        margin-bottom: 7px;
+      }
+      .hint {
+        font-weight: 400;
+        color: var(--ink-soft);
+        font-size: 0.85rem;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        font: inherit;
+        color: var(--ink);
+        background: var(--surface-alt);
+        border: 1px solid var(--border-strong);
+        border-radius: 10px;
+        padding: 11px 13px;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      select {
+        appearance: none;
+        background-image:
+          linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%),
+          linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+        background-position:
+          calc(100% - 20px) 50%,
+          calc(100% - 14px) 50%;
+        background-size: 6px 6px;
+        background-repeat: no-repeat;
+        padding-right: 40px;
+      }
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible,
+      button:focus-visible {
+        outline: none;
+        border-color: var(--brand);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 28%, transparent);
+      }
+      .field.invalid input,
+      .field.invalid select,
+      .field.invalid textarea {
+        border-color: var(--err);
+      }
+      .error {
+        display: none;
+        color: var(--err);
+        font-size: 0.85rem;
+        margin-top: 6px;
+      }
+      .field.invalid .error {
+        display: block;
+      }
 
-  /* Budgetval */
-  fieldset { border: 0; padding: 0; margin: 0 0 22px; }
-  .budget { display: grid; gap: 10px; }
-  @media (min-width: 560px) { .budget { grid-template-columns: repeat(3, 1fr); } }
-  .opt { position: relative; }
-  .opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
-  .opt span {
-    display: block; height: 100%;
-    border: 1px solid var(--border-strong); border-radius: 10px;
-    background: var(--surface-alt); padding: 13px 14px;
-    font-size: .93rem; font-weight: 600;
-  }
-  .opt small { display: block; font-weight: 400; color: var(--ink-soft); margin-top: 2px; }
-  .opt input:checked + span { border-color: var(--brand); background: var(--brand-soft); box-shadow: inset 0 0 0 1px var(--brand); }
-  .opt input:focus-visible + span { box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 28%, transparent); }
-  fieldset.invalid .opt span { border-color: var(--err); }
+      /* Budgetval */
+      fieldset {
+        border: 0;
+        padding: 0;
+        margin: 0 0 22px;
+      }
+      .budget {
+        display: grid;
+        gap: 10px;
+      }
+      @media (min-width: 560px) {
+        .budget {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .opt {
+        position: relative;
+      }
+      .opt input {
+        position: absolute;
+        opacity: 0;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        cursor: pointer;
+      }
+      .opt span {
+        display: block;
+        height: 100%;
+        border: 1px solid var(--border-strong);
+        border-radius: 10px;
+        background: var(--surface-alt);
+        padding: 13px 14px;
+        font-size: 0.93rem;
+        font-weight: 600;
+      }
+      .opt small {
+        display: block;
+        font-weight: 400;
+        color: var(--ink-soft);
+        margin-top: 2px;
+      }
+      .opt input:checked + span {
+        border-color: var(--brand);
+        background: var(--brand-soft);
+        box-shadow: inset 0 0 0 1px var(--brand);
+      }
+      .opt input:focus-visible + span {
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 28%, transparent);
+      }
+      fieldset.invalid .opt span {
+        border-color: var(--err);
+      }
 
-  /* Honungsfälla mot spam – dold för människor, synlig för enkla bottar */
-  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+      /* Honungsfälla mot spam – dold för människor, synlig för enkla bottar */
+      .hp {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
 
-  button {
-    font: inherit; font-weight: 650; cursor: pointer;
-    background: var(--accent); color: #fff;
-    border: 0; border-radius: 10px; padding: 13px 26px;
-    transition: filter .15s, transform .05s;
-  }
-  button:hover { filter: brightness(1.07); }
-  button:active { transform: translateY(1px); }
-  button[disabled] { opacity: .6; cursor: progress; }
-  .actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .actions p { margin: 0; font-size: .85rem; color: var(--ink-soft); }
+      button {
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+        background: var(--accent);
+        color: #fff;
+        border: 0;
+        border-radius: 10px;
+        padding: 13px 26px;
+        transition:
+          filter 0.15s,
+          transform 0.05s;
+      }
+      button:hover {
+        filter: brightness(1.07);
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+      button[disabled] {
+        opacity: 0.6;
+        cursor: progress;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .actions p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
 
-  .spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; display: none; animation: spin .7s linear infinite; }
-  button.loading .spinner { display: inline-block; }
-  button.loading { display: inline-flex; align-items: center; gap: 9px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
+      .spinner {
+        width: 15px;
+        height: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-top-color: #fff;
+        border-radius: 50%;
+        display: none;
+        animation: spin 0.7s linear infinite;
+      }
+      button.loading .spinner {
+        display: inline-block;
+      }
+      button.loading {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .spinner {
+          animation-duration: 2s;
+        }
+      }
 
-  /* Bekräftelse */
-  .thanks { display: none; text-align: left; }
-  .thanks.show { display: block; animation: rise .35s ease-out; }
-  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  @media (prefers-reduced-motion: reduce) { .thanks.show { animation: none; } }
-  .check { width: 46px; height: 46px; border-radius: 50%; background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); display: grid; place-items: center; margin-bottom: 16px; }
-  .thanks h2 { margin: 0 0 8px; font-size: 1.4rem; }
-  .thanks p { margin: 0 0 14px; color: var(--ink-soft); }
-  .ref { display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85rem; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; color: var(--ink); }
+      /* Bekräftelse */
+      .thanks {
+        display: none;
+        text-align: left;
+      }
+      .thanks.show {
+        display: block;
+        animation: rise 0.35s ease-out;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .thanks.show {
+          animation: none;
+        }
+      }
+      .check {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--ok) 15%, transparent);
+        color: var(--ok);
+        display: grid;
+        place-items: center;
+        margin-bottom: 16px;
+      }
+      .thanks h2 {
+        margin: 0 0 8px;
+        font-size: 1.4rem;
+      }
+      .thanks p {
+        margin: 0 0 14px;
+        color: var(--ink-soft);
+      }
+      .ref {
+        display: inline-block;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.85rem;
+        background: var(--surface-alt);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 5px 10px;
+        color: var(--ink);
+      }
 
-  .banner { display: none; margin-bottom: 20px; border-radius: 10px; padding: 13px 15px; font-size: .92rem; border: 1px solid; }
-  .banner.show { display: block; }
-  .banner-error { display: none; background: color-mix(in srgb, var(--err) 10%, transparent); border-color: color-mix(in srgb, var(--err) 45%, transparent); }
-  .banner-error.show { display: block; }
+      .banner {
+        display: none;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        padding: 13px 15px;
+        font-size: 0.92rem;
+        border: 1px solid;
+      }
+      .banner.show {
+        display: block;
+      }
+      .banner-error {
+        display: none;
+        background: color-mix(in srgb, var(--err) 10%, transparent);
+        border-color: color-mix(in srgb, var(--err) 45%, transparent);
+      }
+      .banner-error.show {
+        display: block;
+      }
 
-  footer { margin-top: 28px; font-size: .85rem; color: var(--ink-soft); text-align: center; }
-  a { color: var(--brand); }
-</style>
-</head>
-<body>
-<div class="wrap">
-
-  <header class="masthead">
-    <svg class="logo" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <path d="M6 22 24 7l18 15v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V22Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M19 42V27h10v15" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-    </svg>
-    <div>
-      <div class="brand-name">Nordvind Bygg</div>
-      <div class="brand-tag">Renovering &amp; byggservice i Mälardalen</div>
-    </div>
-  </header>
-
-  <h1>Berätta om ditt projekt</h1>
-  <p class="lede">
-    Fyll i formuläret så återkommer vi inom ett arbetsdygn. Stora projekt går direkt
-    till vår säljansvariga Sara, mindre jobb får svar med en gång.
-  </p>
-
-  <div class="card">
-
-    <!-- Felruta vid nätverks- eller serverfel -->
-    <div class="banner banner-error" id="banner" role="alert"></div>
-
-    <form id="form" novalidate>
-
-      <div class="field" id="f-namn">
-        <label for="namn">Namn</label>
-        <input id="namn" name="namn" type="text" autocomplete="name" required maxlength="80">
-        <p class="error" id="e-namn">Fyll i ditt namn.</p>
-      </div>
-
-      <div class="field" id="f-epost">
-        <label for="epost">E-post</label>
-        <input id="epost" name="epost" type="email" autocomplete="email" required maxlength="120" inputmode="email">
-        <p class="error" id="e-epost">Fyll i en giltig e-postadress, t.ex. namn@exempel.se.</p>
-      </div>
-
-      <div class="field" id="f-telefon">
-        <label for="telefon">Telefon <span class="hint">(frivilligt)</span></label>
-        <input id="telefon" name="telefon" type="tel" autocomplete="tel" maxlength="30">
-      </div>
-
-      <div class="field" id="f-jobbtyp">
-        <label for="jobbtyp">Typ av jobb</label>
-        <select id="jobbtyp" name="jobbtyp" required>
-          <option value="" selected disabled>Välj typ av jobb …</option>
-          <option>Badrumsrenovering</option>
-          <option>Köksrenovering</option>
-          <option>Tillbyggnad / nybyggnation</option>
-          <option>Takarbete</option>
-          <option>Fönster &amp; dörrar</option>
-          <option>Mindre reparation / snickeri</option>
-          <option>Annat</option>
-        </select>
-        <p class="error" id="e-jobbtyp">Välj vilken typ av jobb det gäller.</p>
-      </div>
-
-      <fieldset id="f-budget">
-        <legend class="legend">Ungefärlig budget <span class="hint">– en uppskattning räcker</span></legend>
-        <div class="budget">
-          <label class="opt">
-            <input type="radio" name="budget" value="0" data-text="Under 25 000 kr" required>
-            <span>Under 25 000 kr<small>Mindre jobb</small></span>
-          </label>
-          <label class="opt">
-            <input type="radio" name="budget" value="25000" data-text="25 000–150 000 kr">
-            <span>25 000–150 000 kr<small>Mellanstort</small></span>
-          </label>
-          <label class="opt">
-            <input type="radio" name="budget" value="150000" data-text="Över 150 000 kr">
-            <span>Över 150 000 kr<small>Större projekt</small></span>
-          </label>
-        </div>
-        <p class="error" id="e-budget">Välj en ungefärlig budget.</p>
-      </fieldset>
-
-      <div class="field" id="f-beskrivning">
-        <label for="beskrivning">Beskriv jobbet <span class="hint">– vad, var och när?</span></label>
-        <textarea id="beskrivning" name="beskrivning" required maxlength="2000"
-          placeholder="T.ex. Badrum på 6 kvm i villa från 1974. Vi vill byta allt: tätskikt, kakel, porslin och el. Gärna start efter nyår."></textarea>
-        <p class="error" id="e-beskrivning">Skriv några rader om jobbet så kan vi svara bättre.</p>
-      </div>
-
-      <!-- Honungsfälla: fylls bara i av bottar -->
-      <div class="hp" aria-hidden="true">
-        <label for="foretag">Företag (lämna tomt)</label>
-        <input id="foretag" name="foretag" type="text" tabindex="-1" autocomplete="off">
-      </div>
-
-      <div class="actions">
-        <button type="submit" id="submit">
-          <span class="spinner" aria-hidden="true"></span>
-          <span id="submit-text">Skicka förfrågan</span>
-        </button>
-        <p>Vi delar aldrig dina uppgifter vidare.</p>
-      </div>
-    </form>
-
-    <!-- Bekräftelse på skärmen, utan omladdning -->
-    <div class="thanks" id="thanks" role="status" aria-live="polite" tabindex="-1">
-      <div class="check" aria-hidden="true">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="m5 13 4.5 4.5L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      footer {
+        margin-top: 28px;
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+        text-align: center;
+      }
+      a {
+        color: var(--brand);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="masthead">
+        <svg
+          class="logo"
+          viewBox="0 0 48 48"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M6 22 24 7l18 15v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V22Z"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M19 42V27h10v15"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linejoin="round"
+          />
         </svg>
+        <div>
+          <div class="brand-name">Nordvind Bygg</div>
+          <div class="brand-tag">Renovering &amp; byggservice i Mälardalen</div>
+        </div>
+      </header>
+
+      <h1>Berätta om ditt projekt</h1>
+      <p class="lede">
+        Fyll i formuläret så återkommer vi inom ett arbetsdygn. Stora projekt
+        går direkt till vår säljansvariga Sara, mindre jobb får svar med en
+        gång.
+      </p>
+
+      <div class="card">
+        <!-- Felruta vid nätverks- eller serverfel -->
+        <div
+          class="banner banner-error"
+          id="banner"
+          role="alert"
+        ></div>
+
+        <form
+          id="form"
+          novalidate
+        >
+          <div
+            class="field"
+            id="f-namn"
+          >
+            <label for="namn">Namn</label>
+            <input
+              id="namn"
+              name="namn"
+              type="text"
+              autocomplete="name"
+              required
+              maxlength="80"
+            />
+            <p
+              class="error"
+              id="e-namn"
+            >
+              Fyll i ditt namn.
+            </p>
+          </div>
+
+          <div
+            class="field"
+            id="f-epost"
+          >
+            <label for="epost">E-post</label>
+            <input
+              id="epost"
+              name="epost"
+              type="email"
+              autocomplete="email"
+              required
+              maxlength="120"
+              inputmode="email"
+            />
+            <p
+              class="error"
+              id="e-epost"
+            >
+              Fyll i en giltig e-postadress, t.ex. namn@exempel.se.
+            </p>
+          </div>
+
+          <div
+            class="field"
+            id="f-telefon"
+          >
+            <label for="telefon"
+              >Telefon <span class="hint">(frivilligt)</span></label
+            >
+            <input
+              id="telefon"
+              name="telefon"
+              type="tel"
+              autocomplete="tel"
+              maxlength="30"
+            />
+          </div>
+
+          <div
+            class="field"
+            id="f-jobbtyp"
+          >
+            <label for="jobbtyp">Typ av jobb</label>
+            <select
+              id="jobbtyp"
+              name="jobbtyp"
+              required
+            >
+              <option
+                value=""
+                selected
+                disabled
+              >
+                Välj typ av jobb …
+              </option>
+              <option>Badrumsrenovering</option>
+              <option>Köksrenovering</option>
+              <option>Tillbyggnad / nybyggnation</option>
+              <option>Takarbete</option>
+              <option>Fönster &amp; dörrar</option>
+              <option>Mindre reparation / snickeri</option>
+              <option>Annat</option>
+            </select>
+            <p
+              class="error"
+              id="e-jobbtyp"
+            >
+              Välj vilken typ av jobb det gäller.
+            </p>
+          </div>
+
+          <fieldset id="f-budget">
+            <legend class="legend">
+              Ungefärlig budget
+              <span class="hint">– en uppskattning räcker</span>
+            </legend>
+            <div class="budget">
+              <label class="opt">
+                <input
+                  type="radio"
+                  name="budget"
+                  value="0"
+                  data-text="Under 25 000 kr"
+                  required
+                />
+                <span>Under 25 000 kr<small>Mindre jobb</small></span>
+              </label>
+              <label class="opt">
+                <input
+                  type="radio"
+                  name="budget"
+                  value="25000"
+                  data-text="25 000–150 000 kr"
+                />
+                <span>25 000–150 000 kr<small>Mellanstort</small></span>
+              </label>
+              <label class="opt">
+                <input
+                  type="radio"
+                  name="budget"
+                  value="150000"
+                  data-text="Över 150 000 kr"
+                />
+                <span>Över 150 000 kr<small>Större projekt</small></span>
+              </label>
+            </div>
+            <p
+              class="error"
+              id="e-budget"
+            >
+              Välj en ungefärlig budget.
+            </p>
+          </fieldset>
+
+          <div
+            class="field"
+            id="f-beskrivning"
+          >
+            <label for="beskrivning"
+              >Beskriv jobbet
+              <span class="hint">– vad, var och när?</span></label
+            >
+            <textarea
+              id="beskrivning"
+              name="beskrivning"
+              required
+              maxlength="2000"
+              placeholder="T.ex. Badrum på 6 kvm i villa från 1974. Vi vill byta allt: tätskikt, kakel, porslin och el. Gärna start efter nyår."
+            ></textarea>
+            <p
+              class="error"
+              id="e-beskrivning"
+            >
+              Skriv några rader om jobbet så kan vi svara bättre.
+            </p>
+          </div>
+
+          <!-- Honungsfälla: fylls bara i av bottar -->
+          <div
+            class="hp"
+            aria-hidden="true"
+          >
+            <label for="foretag">Företag (lämna tomt)</label>
+            <input
+              id="foretag"
+              name="foretag"
+              type="text"
+              tabindex="-1"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="actions">
+            <button
+              type="submit"
+              id="submit"
+            >
+              <span
+                class="spinner"
+                aria-hidden="true"
+              ></span>
+              <span id="submit-text">Skicka förfrågan</span>
+            </button>
+            <p>Vi delar aldrig dina uppgifter vidare.</p>
+          </div>
+        </form>
+
+        <!-- Bekräftelse på skärmen, utan omladdning -->
+        <div
+          class="thanks"
+          id="thanks"
+          role="status"
+          aria-live="polite"
+          tabindex="-1"
+        >
+          <div
+            class="check"
+            aria-hidden="true"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="m5 13 4.5 4.5L19 7"
+                stroke="currentColor"
+                stroke-width="2.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <h2 id="thanks-title">Tack för din förfrågan!</h2>
+          <p id="thanks-text">
+            Vi har tagit emot den och hör av oss inom ett arbetsdygn.
+          </p>
+          <p>
+            <span
+              class="ref"
+              id="thanks-ref"
+            ></span>
+          </p>
+        </div>
       </div>
-      <h2 id="thanks-title">Tack för din förfrågan!</h2>
-      <p id="thanks-text">Vi har tagit emot den och hör av oss inom ett arbetsdygn.</p>
-      <p><span class="ref" id="thanks-ref"></span></p>
+
+      <footer>Nordvind Bygg AB · 021-12 34 56 · hej@nordvindbygg.se</footer>
     </div>
 
-  </div>
+    <script>
+      (function () {
+        "use strict";
 
-  <footer>Nordvind Bygg AB · 021-12 34 56 · hej@nordvindbygg.se</footer>
-</div>
-
-<script>
-(function () {
-  "use strict";
-
-  /* ------------------------------------------------------------------
+        /* ------------------------------------------------------------------
      KONFIGURATION
      Klistra in din n8n-webhook-URL här.
      Testkörning:  .../webhook-test/nordvind-kontakt   (kräver "Listen for test event")
      Skarp drift:  .../webhook/nordvind-kontakt        (kräver aktiverat workflow)
   ------------------------------------------------------------------ */
-  var WEBHOOK_URL = "https://DIN-N8N-INSTANS/webhook/nordvind-kontakt";
-  var TIMEOUT_MS = 20000;
+        var WEBHOOK_URL =
+          "https://jenniferhansson.app.n8n.cloud/webhook/nordvind-kontakt";
+        var TIMEOUT_MS = 20000;
 
-  var form = document.getElementById("form");
-  var thanks = document.getElementById("thanks");
-  var banner = document.getElementById("banner");
-  var button = document.getElementById("submit");
-  var buttonText = document.getElementById("submit-text");
+        var form = document.getElementById("form");
+        var thanks = document.getElementById("thanks");
+        var banner = document.getElementById("banner");
+        var button = document.getElementById("submit");
+        var buttonText = document.getElementById("submit-text");
 
-  function fault(id, on) {
-    document.getElementById("f-" + id).classList.toggle("invalid", on);
-  }
+        function fault(id, on) {
+          document.getElementById("f-" + id).classList.toggle("invalid", on);
+        }
 
-  function validate(data) {
-    var ok = true;
-    var checks = {
-      namn: data.namn.length >= 2,
-      epost: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.epost),
-      jobbtyp: data.jobbtyp !== "",
-      budget: data.budgetText !== "",
-      beskrivning: data.beskrivning.length >= 10
-    };
-    Object.keys(checks).forEach(function (key) {
-      fault(key, !checks[key]);
-      if (!checks[key]) { ok = false; }
-    });
-    if (!ok) {
-      var first = form.querySelector(".invalid input, .invalid select, .invalid textarea");
-      if (first) { first.focus(); }
-    }
-    return ok;
-  }
+        function validate(data) {
+          var ok = true;
+          var checks = {
+            namn: data.namn.length >= 2,
+            epost: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.epost),
+            jobbtyp: data.jobbtyp !== "",
+            budget: data.budgetText !== "",
+            beskrivning: data.beskrivning.length >= 10,
+          };
+          Object.keys(checks).forEach(function (key) {
+            fault(key, !checks[key]);
+            if (!checks[key]) {
+              ok = false;
+            }
+          });
+          if (!ok) {
+            var first = form.querySelector(
+              ".invalid input, .invalid select, .invalid textarea",
+            );
+            if (first) {
+              first.focus();
+            }
+          }
+          return ok;
+        }
 
-  function collect() {
-    var budget = form.querySelector('input[name="budget"]:checked');
-    return {
-      namn: form.namn.value.trim(),
-      epost: form.epost.value.trim(),
-      telefon: form.telefon.value.trim(),
-      jobbtyp: form.jobbtyp.value,
-      budgetMin: budget ? Number(budget.value) : null,
-      budgetText: budget ? budget.dataset.text : "",
-      beskrivning: form.beskrivning.value.trim(),
-      foretag: form.foretag.value.trim(),       // honungsfälla
-      skickadFran: location.href,
-      skickadTid: new Date().toISOString()
-    };
-  }
+        function collect() {
+          var budget = form.querySelector('input[name="budget"]:checked');
+          return {
+            namn: form.namn.value.trim(),
+            epost: form.epost.value.trim(),
+            telefon: form.telefon.value.trim(),
+            jobbtyp: form.jobbtyp.value,
+            budgetMin: budget ? Number(budget.value) : null,
+            budgetText: budget ? budget.dataset.text : "",
+            beskrivning: form.beskrivning.value.trim(),
+            foretag: form.foretag.value.trim(), // honungsfälla
+            skickadFran: location.href,
+            skickadTid: new Date().toISOString(),
+          };
+        }
 
-  function showError(message) {
-    banner.textContent = message;
-    banner.classList.add("show");
-  }
+        function showError(message) {
+          banner.textContent = message;
+          banner.classList.add("show");
+        }
 
-  function loading(on) {
-    button.disabled = on;
-    button.classList.toggle("loading", on);
-    buttonText.textContent = on ? "Skickar …" : "Skicka förfrågan";
-  }
+        function loading(on) {
+          button.disabled = on;
+          button.classList.toggle("loading", on);
+          buttonText.textContent = on ? "Skickar …" : "Skicka förfrågan";
+        }
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();                       // sidan laddas aldrig om
-    banner.classList.remove("show");
+        form.addEventListener("submit", function (event) {
+          event.preventDefault(); // sidan laddas aldrig om
+          banner.classList.remove("show");
 
-    var data = collect();
-    if (!validate(data)) { return; }
+          var data = collect();
+          if (!validate(data)) {
+            return;
+          }
 
-    if (WEBHOOK_URL.indexOf("DIN-N8N-INSTANS") !== -1) {
-      showError("Formuläret är inte kopplat till n8n ännu – sätt WEBHOOK_URL i index.html.");
-      return;
-    }
+          if (WEBHOOK_URL.indexOf("DIN-N8N-INSTANS") !== -1) {
+            showError(
+              "Formuläret är inte kopplat till n8n ännu – sätt WEBHOOK_URL i index.html.",
+            );
+            return;
+          }
 
-    loading(true);
+          loading(true);
 
-    var controller = new AbortController();
-    var timer = setTimeout(function () { controller.abort(); }, TIMEOUT_MS);
+          var controller = new AbortController();
+          var timer = setTimeout(function () {
+            controller.abort();
+          }, TIMEOUT_MS);
 
-    fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      signal: controller.signal
-    })
-      .then(function (response) {
-        if (!response.ok) { throw new Error("HTTP " + response.status); }
-        return response.json().catch(function () { return {}; });
-      })
-      .then(function (result) {
-        form.style.display = "none";
-        if (result.rubrik) { document.getElementById("thanks-title").textContent = result.rubrik; }
-        document.getElementById("thanks-text").textContent =
-          result.meddelande || "Vi har tagit emot din förfrågan och hör av oss inom ett arbetsdygn.";
-        document.getElementById("thanks-ref").textContent =
-          "Ärendenummer: " + (result.referens || "–");
-        thanks.classList.add("show");
-        thanks.focus();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      })
-      .catch(function (error) {
-        showError(
-          error.name === "AbortError"
-            ? "Det tog för lång tid att skicka. Kontrollera din uppkoppling och försök igen."
-            : "Något gick fel när förfrågan skulle skickas. Försök igen, eller ring oss på 021-12 34 56."
-        );
-      })
-      .then(function () {
-        clearTimeout(timer);
-        loading(false);
-      });
-  });
+          fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+            signal: controller.signal,
+          })
+            .then(function (response) {
+              if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+              }
+              return response.json().catch(function () {
+                return {};
+              });
+            })
+            .then(function (result) {
+              form.style.display = "none";
+              if (result.rubrik) {
+                document.getElementById("thanks-title").textContent =
+                  result.rubrik;
+              }
+              document.getElementById("thanks-text").textContent =
+                result.meddelande ||
+                "Vi har tagit emot din förfrågan och hör av oss inom ett arbetsdygn.";
+              document.getElementById("thanks-ref").textContent =
+                "Ärendenummer: " + (result.referens || "–");
+              thanks.classList.add("show");
+              thanks.focus();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            })
+            .catch(function (error) {
+              showError(
+                error.name === "AbortError"
+                  ? "Det tog för lång tid att skicka. Kontrollera din uppkoppling och försök igen."
+                  : "Något gick fel när förfrågan skulle skickas. Försök igen, eller ring oss på 021-12 34 56.",
+              );
+            })
+            .then(function () {
+              clearTimeout(timer);
+              loading(false);
+            });
+        });
 
-  // Ta bort felmarkeringen så fort besökaren rättar fältet
-  form.addEventListener("input", function (event) {
-    var field = event.target.closest(".field, fieldset");
-    if (field) { field.classList.remove("invalid"); }
-  });
-  form.addEventListener("change", function (event) {
-    var field = event.target.closest(".field, fieldset");
-    if (field) { field.classList.remove("invalid"); }
-  });
-})();
-</script>
-</body>
+        // Ta bort felmarkeringen så fort besökaren rättar fältet
+        form.addEventListener("input", function (event) {
+          var field = event.target.closest(".field, fieldset");
+          if (field) {
+            field.classList.remove("invalid");
+          }
+        });
+        form.addEventListener("change", function (event) {
+          var field = event.target.closest(".field, fieldset");
+          if (field) {
+            field.classList.remove("invalid");
+          }
+        });
+      })();
+    </script>
+  </body>
 </html>
